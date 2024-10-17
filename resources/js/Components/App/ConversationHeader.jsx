@@ -1,4 +1,4 @@
-import { Link } from "lucide-react";
+import { Link } from "@inertiajs/react";
 import UserAvatar from "@/Components/App/UserAvatar";
 import GroupAvatar from "@/Components/App/GroupAvatar";
 
@@ -12,7 +12,7 @@ export default function ConversationHeader({ selectedConversation }) {
                             href={route("home")}
                             className="inline-block sm:hidden"
                         >
-                            <i className="ri-arrow-left-line text-2xl"></i>
+                            <i className="ri-arrow-left-line text-xl text-white"></i>
                         </Link>
                         {selectedConversation.is_user && (
                             <UserAvatar user={selectedConversation} />

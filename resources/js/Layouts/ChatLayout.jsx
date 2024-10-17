@@ -89,7 +89,7 @@ export default function ChatLayout({ children }) {
         <>
             <div className="flex w-full flex-1 overflow-hidden">
                 <div
-                    className={`flex w-full flex-col overflow-hidden transition-all sm:w-[220px] md:w-[300px] ${selectedConversation ? "-ml[-100%] sm:ml-0" : ""}`}
+                    className={`flex w-full flex-col overflow-hidden transition-all sm:w-[220px] md:w-[300px] ${selectedConversation ? "-ml-[100%] sm:ml-0" : ""}`}
                 >
                     <div className="flex items-center justify-between px-3 py-2 text-xl font-medium">
                         <span className="dark:text-white">My Conversation</span>

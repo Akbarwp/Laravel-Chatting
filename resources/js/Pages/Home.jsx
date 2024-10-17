@@ -7,10 +7,31 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import ChatLayout from "@/Layouts/ChatLayout";
 import { Head } from "@inertiajs/react";
 import { useEffect, useRef, useState } from "react";
+import { useEventBus } from "@/EventBus";
 
 function Home({ messages = null, selectedConversation = null }) {
     const [localMessages, setLocalMessages] = useState([]);
     const messageCtrRef = useRef(null);
+    const { on } = useEventBus();
+
+    const messageCreated = (message) => {
+        if (
+            selectedConversation &&
+            selectedConversation.is_group &&
+            selectedConversation.id == message.group_id
+        ) {
+            setLocalMessages((prevMessage) => [...prevMessage, message]);
+        }
+
+        if (
+            selectedConversation &&
+            selectedConversation.is_user &&
+            (selectedConversation.id == message.sender_id ||
+                selectedConversation.id == message.receiver_id)
+        ) {
+            setLocalMessages((prevMessage) => [...prevMessage, message]);
+        }
+    };
 
     useEffect(() => {
         setLocalMessages(messages ? messages.data.reverse() : []);
@@ -18,9 +39,17 @@ function Home({ messages = null, selectedConversation = null }) {
 
     useEffect(() => {
         setTimeout(() => {
-            messageCtrRef.current.scrollTop =
-                messageCtrRef.current.scrollHeight;
+            if (messageCtrRef.current) {
+                messageCtrRef.current.scrollTop =
+                    messageCtrRef.current.scrollHeight;
+            }
         }, 10);
+
+        const offCreated = on("message.created", messageCreated);
+
+        return () => {
+            offCreated();
+        };
     }, [selectedConversation]);
 
     return (

@@ -21,7 +21,7 @@ export const dateDifferenceInDays = (date) => {
     } else {
         return inputDate.toLocaleDateString("id-ID", formatDay);
     }
-}
+};
 
 const isToday = (date) => {
     const today = new Date();

@@ -63,7 +63,11 @@ export default function ConversationItem({
                         {conversation.name}
                     </h3>
                     {conversation.last_message_date && (
-                        <span className="text-nowrap">{dateDifferenceInDays(conversation.last_message_date)}</span>
+                        <span className="text-nowrap">
+                            {dateDifferenceInDays(
+                                conversation.last_message_date,
+                            )}
+                        </span>
                     )}
                 </div>
                 {conversation.last_message && (
