@@ -1,5 +1,6 @@
 import ConversationItem from "@/Components/App/ConversationItem";
 import TextInput from "@/Components/TextInput";
+import { useEventBus } from "@/EventBus";
 import { usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
@@ -11,8 +12,47 @@ export default function ChatLayout({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
+    const { on } = useEventBus();
 
     const isUserOnline = (userId) => onlineUsers[userId];
+
+    const onSearch = (e) => {
+        const search = e.target.value.toLowerCase();
+        setLocalConversations(
+            conversations.filter((conversation) => {
+                return conversation.name.toLowerCase().includes(search);
+            }),
+        );
+    };
+
+    const messageCreated = (message) => {
+        setLocalConversations((oldUsers) => {
+            return oldUsers.map((user) => {
+                // User Message
+                if (
+                    message.receiver_id &&
+                    !user.is_group &&
+                    (user.id == message.sender_id ||
+                        user.id == message.receiver_id)
+                ) {
+                    user.last_message = message.message;
+                    user.last_message_date = message.created_at;
+                    return user;
+                }
+                // Group Message
+                if (
+                    message.group_id &&
+                    user.is_group &&
+                    user.id == message.group_id
+                ) {
+                    user.last_message = message.message;
+                    user.last_message_date = message.created_at;
+                    return user;
+                }
+                return user;
+            });
+        });
+    };
 
     useEffect(() => {
         setSortedConversations(
@@ -76,14 +116,12 @@ export default function ChatLayout({ children }) {
         };
     }, []);
 
-    const onSearch = (e) => {
-        const search = e.target.value.toLowerCase();
-        setLocalConversations(
-            conversations.filter((conversation) => {
-                return conversation.name.toLowerCase().includes(search);
-            }),
-        );
-    };
+    useEffect(() => {
+        const offCreated = on("message.created", messageCreated);
+        return () => {
+            offCreated();
+        };
+    }, [on]);
 
     return (
         <>

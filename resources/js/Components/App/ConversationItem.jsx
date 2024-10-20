@@ -2,7 +2,7 @@ import { Link, usePage } from "@inertiajs/react";
 import UserAvatar from "@/Components/App/UserAvatar";
 import GroupAvatar from "@/Components/App/GroupAvatar";
 import UserOptionsDropdown from "@/Components/App/UserOptionsDropdown";
-import { dateDifferenceInDays } from "@/helper";
+import { dateDifferenceInDaysConversation } from "@/helper";
 
 export default function ConversationItem({
     conversation,
@@ -64,7 +64,7 @@ export default function ConversationItem({
                     </h3>
                     {conversation.last_message_date && (
                         <span className="text-nowrap">
-                            {dateDifferenceInDays(
+                            {dateDifferenceInDaysConversation(
                                 conversation.last_message_date,
                             )}
                         </span>

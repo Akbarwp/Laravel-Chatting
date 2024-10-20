@@ -1,4 +1,6 @@
 import NewMessageInput from "@/Components/App/NewMessageInput";
+import { Popover, PopoverButton, PopoverPanel } from "@headlessui/react";
+import EmojiPicker from "emoji-picker-react";
 import { useState } from "react";
 
 export default function MessageInput({ conversation = null }) {
@@ -7,6 +9,10 @@ export default function MessageInput({ conversation = null }) {
     const [messageSending, setMessageSending] = useState(false);
 
     const onSendClick = () => {
+        if (messageSending) {
+            return;
+        }
+
         if (NewMessage.trim() == "") {
             setInputErrorMessage("Please enter a message");
             setTimeout(() => {
@@ -30,7 +36,7 @@ export default function MessageInput({ conversation = null }) {
                     const progress = Math.round(
                         (progressEvent.loaded / progressEvent.total) * 100,
                     );
-                    console.log(progress);
+                    // console.log(progress);
                 },
             })
             .then((res) => {
@@ -40,6 +46,24 @@ export default function MessageInput({ conversation = null }) {
             .catch((error) => {
                 setMessageSending(false);
             });
+    };
+
+    const onLikeClick = () => {
+        if (messageSending) {
+            return;
+        }
+
+        const data = {
+            message: "👍",
+        };
+
+        if (conversation.is_user) {
+            data["receiver_id"] = conversation.id;
+        } else if (conversation.is_group) {
+            data["group_id"] = conversation.id;
+        }
+
+        axios.post(route("message.store"), data);
     };
 
     return (
@@ -75,6 +99,7 @@ export default function MessageInput({ conversation = null }) {
                     <button
                         className="btn btn-success rounded-l-none"
                         onClick={onSendClick}
+                        disabled={messageSending}
                     >
                         {messageSending && (
                             <span className="loading loading-spinner loading-xs"></span>
@@ -90,10 +115,27 @@ export default function MessageInput({ conversation = null }) {
                 )}
             </div>
             <div className="order-3 flex p-2 sm:order-3">
-                <button className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
-                    <i className="ri-emotion-fill text-2xl"></i>
-                </button>
-                <button className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                <Popover className="relative">
+                    <PopoverButton className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                        <i className="ri-emotion-fill text-2xl"></i>
+                    </PopoverButton>
+                    {/* <PopoverPanel className="absolute z-10 right-0 bottom-full"> */}
+                    <PopoverPanel
+                        anchor="bottom start"
+                        transition
+                        className="flex origin-top flex-col transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
+                    >
+                        <EmojiPicker
+                            onEmojiClick={(e) =>
+                                setNewMessage(NewMessage + e.emoji)
+                            }
+                        />
+                    </PopoverPanel>
+                </Popover>
+                <button
+                    className="p-1 text-gray-400 hover:text-gray-500 dark:hover:text-gray-300"
+                    onClick={onLikeClick}
+                >
                     <i className="ri-thumb-up-fill text-2xl"></i>
                 </button>
             </div>

@@ -13,7 +13,32 @@ export const dateDifferenceInDays = (date) => {
     };
 
     if (isToday(inputDate)) {
-        return inputDate.toLocaleDateString("id-ID", formatClock);
+        return "Today, " + inputDate.toLocaleTimeString("id-ID", formatClock);
+    } else if (isYesterday(inputDate)) {
+        return "Yesterday, " + inputDate.toLocaleTimeString("id-ID", formatClock);
+    } else if (inputDate.getFullYear() === now.getFullYear()) {
+        return inputDate.toLocaleDateString("id-ID", formatDay);
+    } else {
+        return inputDate.toLocaleDateString("id-ID", formatDay);
+    }
+};
+
+export const dateDifferenceInDaysConversation = (date) => {
+    const now = new Date();
+    const inputDate = new Date(date);
+
+    const formatDay = {
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+    };
+    const formatClock = {
+        hour: "2-digit",
+        minute: "2-digit",
+    };
+
+    if (isToday(inputDate)) {
+        return inputDate.toLocaleTimeString("id-ID", formatClock);
     } else if (isYesterday(inputDate)) {
         return "Yesterday";
     } else if (inputDate.getFullYear() === now.getFullYear()) {

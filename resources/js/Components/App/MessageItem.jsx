@@ -30,7 +30,11 @@ export default function MessageItem({ message }) {
                                 : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                         }`}
                     >
-                        <ReactMarkdown>{message.message}</ReactMarkdown>
+                        <div className="chat-message">
+                            <div className="chat-message-content">
+                                <ReactMarkdown>{message.message}</ReactMarkdown>
+                            </div>
+                        </div>
                     </div>
                 </div>
             ) : (
@@ -52,7 +56,11 @@ export default function MessageItem({ message }) {
                                 : "bg-gray-300 text-gray-800 dark:bg-gray-700 dark:text-gray-200"
                         }`}
                     >
-                        <ReactMarkdown>{message.message}</ReactMarkdown>
+                        <div className="chat-message">
+                            <div className="chat-message-content">
+                                <ReactMarkdown>{message.message}</ReactMarkdown>
+                            </div>
+                        </div>
                     </div>
                 </div>
             )}
