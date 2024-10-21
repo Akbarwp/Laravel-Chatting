@@ -8,6 +8,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useEventBus } from "@/EventBus";
 import { HeroHighlight, Highlight } from "@/Components/ui/hero-highlight";
 import { motion } from "framer-motion";
+import AttachmentPreviewModal from "@/Components/App/AttachmentPreviewModal";
 
 function Home({ messages = null, selectedConversation = null }) {
     const [localMessages, setLocalMessages] = useState([]);
@@ -16,6 +17,8 @@ function Home({ messages = null, selectedConversation = null }) {
     const loadMoreIntersect = useRef(null);
     const [noMoreMessages, setNoMoreMessages] = useState(false);
     const [scrollFromBottom, setScrollFromBottom] = useState(0);
+    const [showAttachmentPreview, setShowAttachmentPreview] = useState(false);
+    const [previewAttachment, setPreviewAttachment] = useState({});
 
     const messageCreated = (message) => {
         if (
@@ -61,6 +64,11 @@ function Home({ messages = null, selectedConversation = null }) {
                 });
             });
     }, [localMessages, noMoreMessages]);
+
+    const onAttachmentClick = (attachments, index) => {
+        setPreviewAttachment({ attachments, index });
+        setShowAttachmentPreview(true);
+    };
 
     useEffect(() => {
         setLocalMessages(messages ? messages.data.reverse() : []);
@@ -174,6 +182,7 @@ function Home({ messages = null, selectedConversation = null }) {
                                     <MessageItem
                                         key={message.id}
                                         message={message}
+                                        attachmentClick={onAttachmentClick}
                                     />
                                 ))}
                             </div>
@@ -181,6 +190,14 @@ function Home({ messages = null, selectedConversation = null }) {
                     </div>
                     <MessageInput conversation={selectedConversation} />
                 </>
+            )}
+            {previewAttachment.attachments && (
+                <AttachmentPreviewModal
+                    attachments={previewAttachment.attachments}
+                    index={previewAttachment.index}
+                    show={showAttachmentPreview}
+                    onClose={() => setShowAttachmentPreview(false)}
+                />
             )}
         </>
     );

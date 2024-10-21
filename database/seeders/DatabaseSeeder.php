@@ -33,7 +33,7 @@ class DatabaseSeeder extends Seeder
                 'owner_id' => 1,
             ]);
 
-            $users = User::inRandomOrder()->limit(rand(2,5))->pluck('id');
+            $users = User::inRandomOrder()->limit(rand(2, 5))->pluck('id');
             $group->users()->attach(array_unique([1, ...$users]));
         }
 
@@ -53,5 +53,42 @@ class DatabaseSeeder extends Seeder
         })->values();
 
         Conversation::insertOrIgnore($conversations->toArray());
+
+        Message::create([
+            'sender_id' => 1,
+            'receiver_id' => 2,
+            'message' => "
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+This is a paragraph with **bold text**, *italic text*, and `inline code`. Here's a [link to Google](https://www.google.com).
+---
+> This is a blockquote. Blockquotes are useful for highlighting important notes or citations.
+Here is a list:
+- Item 1
+- Item 2
+   - Subitem 2.1
+   - Subitem 2.2
+- Item 3
+Here is an ordered list:
+1. First item
+2. Second item
+   1. Subitem 2.1
+   2. Subitem 2.2
+3. Third item
+```python
+# This is a code block for Python
+def hello_world():
+   print('Hello, world!')
+            ",
+        ]);
+        Message::create([
+            'sender_id' => 2,
+            'receiver_id' => 1,
+            'message' => "🤣🦊😀"
+        ]);
     }
 }
