@@ -5,6 +5,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useState } from "react";
 import CustomAudioPlayer from "@/Components/App/CustomAudioPlayer";
 import AttachmentPreview from "@/Components/App/AttachmentPreview";
+import AudioRecorder from "@/Components/App/AudioRecorder";
 
 export default function MessageInput({ conversation = null }) {
     const [NewMessage, setNewMessage] = useState("");
@@ -96,6 +97,10 @@ export default function MessageInput({ conversation = null }) {
         });
     };
 
+    const recordedAudioReady = (file, url) => {
+        setChosenFiles((prevFiles) => [...prevFiles, { file, url }]);
+    };
+
     return (
         <div className="flex flex-wrap items-start border-t border-gray-700 bg-gradient-to-tl from-gray-100 to-gray-50 py-3 dark:from-gray-900 dark:to-gray-800">
             <div className="order-2 flex-1 p-2 sm:order-1 sm:flex-none">
@@ -118,6 +123,7 @@ export default function MessageInput({ conversation = null }) {
                         onChange={onFileChange}
                     />
                 </button>
+                <AudioRecorder fileReady={recordedAudioReady} />
             </div>
             <div className="relative order-1 min-w-[220px] flex-1 basis-full px-3 sm:order-2 sm:basis-0 sm:p-0">
                 <div className="flex">
