@@ -17,6 +17,11 @@ class Group extends Model
         'last_message_id',
     ];
 
+    public function lastMessage()
+    {
+        return $this->belongsTo(Message::class, 'last_message_id');
+    }
+
     public function users()
     {
         return $this->belongsToMany(User::class, 'group_users');

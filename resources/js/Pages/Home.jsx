@@ -26,7 +26,7 @@ function Home({ messages = null, selectedConversation = null }) {
             selectedConversation.is_group &&
             selectedConversation.id == message.group_id
         ) {
-            setLocalMessages((prevMessage) => [...prevMessage, message]);
+            setLocalMessages((prevMessages) => [...prevMessages, message]);
         }
 
         if (
@@ -35,7 +35,30 @@ function Home({ messages = null, selectedConversation = null }) {
             (selectedConversation.id == message.sender_id ||
                 selectedConversation.id == message.receiver_id)
         ) {
-            setLocalMessages((prevMessage) => [...prevMessage, message]);
+            setLocalMessages((prevMessages) => [...prevMessages, message]);
+        }
+    };
+
+    const messageDeleted = ({ message }) => {
+        if (
+            selectedConversation &&
+            selectedConversation.is_group &&
+            selectedConversation.id == message.group_id
+        ) {
+            setLocalMessages((prevMessages) => {
+                return prevMessages.filter((m) => m.id !== message.id);
+            });
+        }
+
+        if (
+            selectedConversation &&
+            selectedConversation.is_user &&
+            (selectedConversation.id == message.sender_id ||
+                selectedConversation.id == message.receiver_id)
+        ) {
+            setLocalMessages((prevMessages) => {
+                return prevMessages.filter((m) => m.id !== message.id);
+            });
         }
     };
 
@@ -83,10 +106,14 @@ function Home({ messages = null, selectedConversation = null }) {
         }, 10);
 
         const offCreated = on("message.created", messageCreated);
+        const offDeleted = on("message.deleted", messageDeleted);
+
         setScrollFromBottom(0);
+        setNoMoreMessages(false);
 
         return () => {
             offCreated();
+            offDeleted();
         };
     }, [selectedConversation]);
 
@@ -150,7 +177,7 @@ function Home({ messages = null, selectedConversation = null }) {
                                     Tap a conversation to keep the flow going!
                                 </span>
                                 <Highlight className="white mt-3 text-xl text-black dark:text-white md:text-2xl lg:text-3xl">
-                                    Connecting Conversations, Inspiring
+                                    Connecting, Conversations, Inspiring
                                     Connections.
                                 </Highlight>
                             </div>

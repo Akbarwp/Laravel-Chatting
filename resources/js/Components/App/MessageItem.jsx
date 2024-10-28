@@ -3,6 +3,7 @@ import { usePage } from "@inertiajs/react";
 import ReactMarkdown from "react-markdown";
 import UserAvatar from "@/Components/App/UserAvatar";
 import MessageAttachments from "@/Components/App/MessageAttachments";
+import MessageOptionsDropdown from "@/Components/App/MessageOptionsDropdown";
 
 export default function MessageItem({ message, attachmentClick }) {
     const currentUser = usePage().props.auth.user;
@@ -14,6 +15,11 @@ export default function MessageItem({ message, attachmentClick }) {
                     className={`chat ${message.sender_id === currentUser.id ? "chat-end" : "chat-start"}`}
                 >
                     <div className="avatar chat-image">
+                        <div className="mr-1">
+                            {message.sender_id == currentUser.id && (
+                                <MessageOptionsDropdown message={message} />
+                            )}
+                        </div>
                         <UserAvatar user={message.sender} />
                     </div>
                     <div className="chat-header">
@@ -46,6 +52,11 @@ export default function MessageItem({ message, attachmentClick }) {
                 <div
                     className={`chat ${message.sender_id === currentUser.id ? "chat-end" : "chat-start"}`}
                 >
+                    <div className="avatar chat-image">
+                        {message.sender_id == currentUser.id && (
+                            <MessageOptionsDropdown message={message} />
+                        )}
+                    </div>
                     <div className="chat-header">
                         {/* {message.sender_id !== currentUser.id
                         ? message.sender.name

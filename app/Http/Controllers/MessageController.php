@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\SocketMessage;
+use App\Events\SocketMessageDeleted;
 use App\Http\Requests\StoreMessageRequest;
 use App\Http\Resources\MessageResource;
 use App\Models\Conversation;
@@ -118,8 +119,28 @@ class MessageController extends Controller
             return response()->json(['message' => 'Forbidden'], 403);
         }
 
+        $group = null;
+        $conversation = null;
+
+        // Check if delete group message
+        if ($message->group_id) {
+            $group = Group::where('last_message_id', $message->id)->first();
+        } else {
+            $conversation = Conversation::where('last_message_id', $message->id)->first();
+        }
+
         $message->delete();
 
-        return response('', 204);
+        if ($group) {
+            $group = Group::find($group->id);
+            $lastMessage = $group->lastMessage;
+        } elseif ($conversation) {
+            $conversation = Conversation::find($conversation->id);
+            $lastMessage = $conversation->lastMessage;
+        }
+
+        SocketMessageDeleted::dispatch($message, $lastMessage);
+
+        return response()->json(['message' => $lastMessage ? new MessageResource($lastMessage) : null], 200);
     }
 }

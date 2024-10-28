@@ -54,6 +54,13 @@ export default function ChatLayout({ children }) {
         });
     };
 
+    const messageDeleted = ({ prevMessage }) => {
+        if (!prevMessage) {
+            return;
+        }
+        messageCreated(prevMessage);
+    };
+
     useEffect(() => {
         setSortedConversations(
             localConversations.sort((a, b) => {
@@ -118,8 +125,10 @@ export default function ChatLayout({ children }) {
 
     useEffect(() => {
         const offCreated = on("message.created", messageCreated);
+        const offDeleted = on("message.deleted", messageDeleted);
         return () => {
             offCreated();
+            offDeleted();
         };
     }, [on]);
 
