@@ -52,7 +52,7 @@ export default function MessageOptionsDropdown({ message }) {
                         {(active) => (
                             <button
                                 onClick={onMessageDelete}
-                                className={`${active ? "bg-gray-800" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-600`}
+                                className={`${active ? "bg-gray-800 dark:bg-gray-600" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-500`}
                             >
                                 <i className="ri-delete-bin-line mr-1"></i>
                                 Delete

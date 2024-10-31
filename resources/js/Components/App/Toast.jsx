@@ -21,7 +21,7 @@ export default function Toast({ message }) {
 
     return (
         <div>
-            <div className="fixed bottom-0 right-0 top-auto flex min-w-[280px] flex-col gap-2 whitespace-nowrap p-4">
+            <div className="fixed bottom-0 right-0 top-auto flex min-w-[280px] flex-col gap-2 whitespace-nowrap p-4 justify-end">
                 {toasts.map((toast, index) => (
                     <HoverBorderGradient
                         key={toast.uuid}

@@ -41,13 +41,13 @@ export default function UserOptionsDropdown({ conversation }) {
                 <MenuItems
                     anchor="bottom"
                     transition
-                    className="absolute right-0 z-50 mt-2 w-48 origin-top rounded-md bg-gray-800 shadow-lg transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0"
+                    className="absolute right-0 z-50 mt-2 w-48 origin-top rounded-md bg-gray-800 shadow-lg transition duration-200 ease-out data-[closed]:scale-95 data-[closed]:opacity-0 dark:bg-gray-600"
                 >
                     <MenuItem>
                         {(active) => (
                             <button
                                 onClick={onBlockUser}
-                                className={`${active ? "bg-gray-800" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-600`}
+                                className={`${active ? "bg-gray-800 dark:bg-gray-600" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-500`}
                             >
                                 {conversation.blocked_at && (
                                     <div>
@@ -68,7 +68,7 @@ export default function UserOptionsDropdown({ conversation }) {
                         {(active) => (
                             <button
                                 onClick={changeUserRole}
-                                className={`${active ? "bg-gray-800" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-600`}
+                                className={`${active ? "bg-gray-800 dark:bg-gray-600" : ""} group flex w-full items-center p-2 text-sm text-gray-100 transition hover:bg-gray-600 dark:hover:bg-gray-500`}
                             >
                                 {conversation.is_admin && (
                                     <div>

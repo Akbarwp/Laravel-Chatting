@@ -27,9 +27,6 @@ export default function AuthenticatedLayout({ header, children }) {
 
             // console.log("Start listening on channel", channel);
             Echo.private(channel)
-                .error((error) => {
-                    console.log(error);
-                })
                 .listen("SocketMessage", (e) => {
                     const message = e.message;
                     // console.log("SocketMessage: " + e.message);
@@ -47,17 +44,30 @@ export default function AuthenticatedLayout({ header, children }) {
                             message.message ||
                             `Shared ${message.attachments.length === 1 ? "an attachment" : message.attachments.length + " attachments"}`,
                     });
+                })
+                .error((error) => {
+                    console.error(error);
                 });
 
             Echo.private(channel)
-                .error((error) => {
-                    console.log(error);
-                })
                 .listen("SocketMessageDeleted", (e) => {
                     const message = e.message;
                     const prevMessage = e.prevMessage;
                     emit("message.deleted", { message, prevMessage });
+                })
+                .error((error) => {
+                    console.error(error);
                 });
+
+            if (conversation.is_group) {
+                Echo.private(`group.deleted.${conversation.id}`)
+                    .listen("GroupDeleted", (e) => {
+                        emit("group.deleted", { id: e.id, name: e.name });
+                    })
+                    .error((error) => {
+                        console.error(error);
+                    });
+            }
         });
 
         return () => {
@@ -67,6 +77,10 @@ export default function AuthenticatedLayout({ header, children }) {
                     channel = `message.user.${[parseInt(user.id), parseInt(conversation.id)].sort((a, b) => a - b).join("-")}`;
                 }
                 Echo.leave(channel);
+
+                if (conversation.is_group) {
+                    Echo.leave(`group.deleted.${conversation.id}`);
+                }
             });
         };
     }, [conversations]);

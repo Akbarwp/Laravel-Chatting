@@ -1,7 +1,8 @@
 import ConversationItem from "@/Components/App/ConversationItem";
+import GroupModal from "@/Components/App/GroupModal";
 import TextInput from "@/Components/TextInput";
 import { useEventBus } from "@/EventBus";
-import { usePage } from "@inertiajs/react";
+import { router, usePage } from "@inertiajs/react";
 import { useEffect, useState } from "react";
 
 export default function ChatLayout({ children }) {
@@ -12,7 +13,8 @@ export default function ChatLayout({ children }) {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [localConversations, setLocalConversations] = useState([]);
     const [sortedConversations, setSortedConversations] = useState([]);
-    const { on } = useEventBus();
+    const [showGroupModal, setShowGroupModal] = useState(false);
+    const { on, emit } = useEventBus();
 
     const isUserOnline = (userId) => onlineUsers[userId];
 
@@ -126,9 +128,27 @@ export default function ChatLayout({ children }) {
     useEffect(() => {
         const offCreated = on("message.created", messageCreated);
         const offDeleted = on("message.deleted", messageDeleted);
+        const offModalShow = on("GroupModal.show", (group) => {
+            setShowGroupModal(true);
+        });
+        const offGroupDeleted = on("group.deleted", ({ id, name }) => {
+            setLocalConversations((oldConversations) => {
+                return oldConversations.filter((con) => con.id != id);
+            });
+            emit("toast.show", `Group "${name}" was deleted`);
+            if (
+                !selectedConversation ||
+                selectedConversation.is_group && selectedConversation.id == id
+            ) {
+                router.visit(route("home"));
+            }
+        });
+
         return () => {
             offCreated();
             offDeleted();
+            offModalShow();
+            offGroupDeleted();
         };
     }, [on]);
 
@@ -144,7 +164,10 @@ export default function ChatLayout({ children }) {
                             className="tooltip tooltip-left"
                             data-tip="Create new group"
                         >
-                            <button className="btn btn-ghost btn-sm">
+                            <button
+                                onClick={() => setShowGroupModal(true)}
+                                className="btn btn-ghost btn-sm"
+                            >
                                 <i className="ri-user-add-line text-lg text-gray-800 dark:text-gray-200"></i>
                             </button>
                         </div>
@@ -173,6 +196,10 @@ export default function ChatLayout({ children }) {
                     {children}
                 </div>
             </div>
+            <GroupModal
+                show={showGroupModal}
+                onClose={() => setShowGroupModal(false)}
+            />
         </>
     );
 }

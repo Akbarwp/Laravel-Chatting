@@ -1,4 +1,4 @@
-export default function UserAvatar({ user, online = null, profile = null }) {
+export default function UserAvatar({ user, online = null, profile = null, className = null }) {
     let onlineClass =
         online === true ? "offline" : online === false ? "online" : "";
     const sizeClass = profile ? "w-40" : "w-8";
@@ -15,7 +15,7 @@ export default function UserAvatar({ user, online = null, profile = null }) {
             {!user.avatar_url && (
                 <div className={`avatar placeholder ${onlineClass}`}>
                     <div
-                        className={`${sizeClass} rounded-full bg-neutral text-neutral-content dark:bg-slate-500 dark:text-slate-100`}
+                        className={`${sizeClass} rounded-full ${className ? className : "bg-neutral text-neutral-content dark:bg-slate-500 dark:text-slate-100"}`}
                     >
                         <span className="text-xl">
                             {user.name.substring(0, 1)}
