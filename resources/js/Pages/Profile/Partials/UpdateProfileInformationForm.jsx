@@ -1,27 +1,45 @@
-import InputError from '@/Components/InputError';
-import InputLabel from '@/Components/InputLabel';
-import PrimaryButton from '@/Components/PrimaryButton';
-import TextInput from '@/Components/TextInput';
-import { Transition } from '@headlessui/react';
-import { Link, useForm, usePage } from '@inertiajs/react';
+import InputError from "@/Components/InputError";
+import InputLabel from "@/Components/InputLabel";
+import PrimaryButton from "@/Components/PrimaryButton";
+import TextInput from "@/Components/TextInput";
+import { Transition } from "@headlessui/react";
+import { Link, useForm, usePage } from "@inertiajs/react";
 
 export default function UpdateProfileInformation({
     mustVerifyEmail,
     status,
-    className = '',
+    className = "",
 }) {
     const user = usePage().props.auth.user;
 
-    const { data, setData, patch, errors, processing, recentlySuccessful } =
+    const { data, setData, post, errors, processing, recentlySuccessful } =
         useForm({
+            avatar: null,
             name: user.name,
             email: user.email,
+            _method: "PATCH",
         });
 
     const submit = (e) => {
         e.preventDefault();
+        post(route("profile.update", data));
+    };
 
-        patch(route('profile.update'));
+    console.log(user);
+
+    const previewImage = (e) => {
+        setData("avatar", e.target.files[0]);
+        const image = document.querySelector("#avatar");
+        const imgPreview = document.querySelector(".img-preview");
+
+        imgPreview.style.display = "block";
+
+        const oFReader = new FileReader();
+        oFReader.readAsDataURL(image.files[0]);
+
+        oFReader.onload = function (oFREvent) {
+            imgPreview.src = oFREvent.target.result;
+        };
     };
 
     return (
@@ -36,7 +54,41 @@ export default function UpdateProfileInformation({
                 </p>
             </header>
 
-            <form onSubmit={submit} className="mt-6 space-y-6">
+            <form onSubmit={submit} className="mt-6 space-y-6" encType="multipart/form-data">
+                <div>
+                    <div className="avatar">
+                        <div className="w-20 rounded-full">
+                            {user.avatar_url ? (
+                                <img
+                                    src={user.avatar_url}
+                                    alt="profile-picture"
+                                    className="img-preview"
+                                />
+                            ) : (
+                                <img
+                                    src="https://img.daisyui.com/images/stock/photo-1635805737707-575885ab0820.webp"
+                                    alt="profile-picture"
+                                    className="img-preview"
+                                />
+                            )}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <InputLabel htmlFor="avatar" value="Profile Picture" />
+
+                    <input
+                        id="avatar"
+                        name="avatar"
+                        type="file"
+                        className="file-input file-input-bordered file-input-sm mt-1 w-full"
+                        onChange={(e) => previewImage(e)}
+                    />
+
+                    <InputError className="mt-2" message={errors.avatar} />
+                </div>
+
                 <div>
                     <InputLabel htmlFor="name" value="Name" />
 
@@ -44,9 +96,8 @@ export default function UpdateProfileInformation({
                         id="name"
                         className="mt-1 block w-full"
                         value={data.name}
-                        onChange={(e) => setData('name', e.target.value)}
+                        onChange={(e) => setData("name", e.target.value)}
                         required
-                        isFocused
                         autoComplete="name"
                     />
 
@@ -61,7 +112,7 @@ export default function UpdateProfileInformation({
                         type="email"
                         className="mt-1 block w-full"
                         value={data.email}
-                        onChange={(e) => setData('email', e.target.value)}
+                        onChange={(e) => setData("email", e.target.value)}
                         required
                         autoComplete="username"
                     />
@@ -74,7 +125,7 @@ export default function UpdateProfileInformation({
                         <p className="mt-2 text-sm text-gray-800 dark:text-gray-200">
                             Your email address is unverified.
                             <Link
-                                href={route('verification.send')}
+                                href={route("verification.send")}
                                 method="post"
                                 as="button"
                                 className="rounded-md text-sm text-gray-600 underline hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 dark:text-gray-400 dark:hover:text-gray-100 dark:focus:ring-offset-gray-800"
@@ -83,7 +134,7 @@ export default function UpdateProfileInformation({
                             </Link>
                         </p>
 
-                        {status === 'verification-link-sent' && (
+                        {status === "verification-link-sent" && (
                             <div className="mt-2 text-sm font-medium text-green-600 dark:text-green-400">
                                 A new verification link has been sent to your
                                 email address.
