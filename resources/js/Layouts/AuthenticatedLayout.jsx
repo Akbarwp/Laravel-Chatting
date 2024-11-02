@@ -1,4 +1,5 @@
 import NewMessageNotification from "@/Components/App/NewMessageNotification";
+import NewUserModal from "@/Components/App/NewUserModal";
 import Toast from "@/Components/App/Toast";
 import ApplicationLogo from "@/Components/ApplicationLogo";
 import Dropdown from "@/Components/Dropdown";
@@ -15,6 +16,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
+    const [showNewUserModal, setShowNewUserModal] = useState(false);
     const { emit } = useEventBus();
 
     useEffect(() => {
@@ -119,6 +121,20 @@ export default function AuthenticatedLayout({ header, children }) {
                             </div>
 
                             <div className="hidden sm:ms-6 sm:flex sm:items-center">
+                                {user.is_admin && (
+                                    <div className="relative ms-3">
+                                        <button
+                                            className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none dark:bg-gray-800 dark:text-gray-400 dark:hover:text-gray-300"
+                                            onClick={() =>
+                                                setShowNewUserModal(true)
+                                            }
+                                        >
+                                            <i className="ri-user-add-line mr-1 text-lg"></i>
+                                            <span>Add New User</span>
+                                        </button>
+                                    </div>
+                                )}
+
                                 <div className="relative ms-3">
                                     <Dropdown>
                                         <Dropdown.Trigger>
@@ -336,6 +352,7 @@ export default function AuthenticatedLayout({ header, children }) {
             </div>
             <Toast />
             <NewMessageNotification />
+            <NewUserModal show={showNewUserModal} onClose={() => setShowNewUserModal(false)} />
         </>
     );
 }
