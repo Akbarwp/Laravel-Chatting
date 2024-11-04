@@ -2,9 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\UserBlockUnblock;
+use App\Mail\UserCreated;
+use App\Mail\UserRoleChanged;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends Controller
 {
@@ -16,12 +20,14 @@ class UserController extends Controller
             'is_admin' => 'boolean',
         ]);
 
-        // $rawPassword = str()->random(8);
-        $rawPassword ="password";
+        $rawPassword = str()->random(8);
+        // $rawPassword ="password";
         $data['password'] = Hash::make($rawPassword);
         $data['email_verified_at'] = now();
 
         $user = User::create($data);
+
+        Mail::to($user)->send(new UserCreated($user, $rawPassword));
 
         return redirect()->back();
     }
@@ -29,7 +35,10 @@ class UserController extends Controller
     public function changeRole(User $user)
     {
         $user->update(['is_admin' => !(bool) $user->is_admin]);
-        $message = "Role changed to " . $user->is_admin ? 'Admin' : 'Regular User';
+        $message = "Role changed to " . ($user->is_admin ? 'Admin' : 'Regular User');
+
+        Mail::to($user)->send(new UserRoleChanged($user));
+
         return response()->json(['message' => $message]);
     }
 
@@ -37,13 +46,15 @@ class UserController extends Controller
     {
         if ($user->blocked_at) {
             $user->blocked_at = null;
-            $message = "🎉 Congratulations! Your account has been successfully activated! 🎉";
+            $message = '🎉 Congratulations! User "'. $user->name .'" has been successfully activated! 🎉';
         } else {
             $user->blocked_at = now();
-            $message = "⚠️ Important Notice: Your Account Has Been Blocked ⚠️";
+            $message = '⚠️ Important Notice: User "'. $user->name .'" Has Been Blocked ⚠️';
         }
 
         $user->save();
+
+        Mail::to($user)->send(new UserBlockUnblock($user));
 
         return response()->json(['message' => $message]);
     }

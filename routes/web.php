@@ -29,7 +29,7 @@ Route::middleware('auth')->group(function () {
 });
 
 Route::group([
-    'middleware' => ['auth', 'verified'],
+    'middleware' => ['auth', 'verified', 'activeUser'],
 
 ], function() {
     Route::get('/', [HomeController::class, 'home'])->name('home');
