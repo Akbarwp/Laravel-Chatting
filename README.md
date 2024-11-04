@@ -54,7 +54,7 @@ Follow the steps below to clone and run the project in your local environment:
     php artisan key:generate
     ```
 
-5. Setup database and Midtrans key in the `.env` file:
+5. Setup database and other key in the `.env` file:
 
     ```plaintext
     DB_CONNECTION=mysql
@@ -66,6 +66,7 @@ Follow the steps below to clone and run the project in your local environment:
     ```
 
     ```plaintext
+    BROADCAST_CONNECTION=reverb
     APP_EMAIL="hello@example.com"
     MAIL_MAILER=log
     MAIL_HOST=127.0.0.1
@@ -77,13 +78,13 @@ Follow the steps below to clone and run the project in your local environment:
     MAIL_FROM_NAME="${APP_NAME}"
     ```
 
-6. Run migration database:
+7. Run migration database:
 
     ```bash
     php artisan migrate
     ```
 
-7. Run website:
+8. Run website:
 
     ```bash
     npm run dev
