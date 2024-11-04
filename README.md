@@ -52,6 +52,7 @@ Follow the steps below to clone and run the project in your local environment:
 
     ```bash
     php artisan key:generate
+    php artisan install:broadcasting
     ```
 
 5. Setup database and other key in the `.env` file:
@@ -76,6 +77,22 @@ Follow the steps below to clone and run the project in your local environment:
     MAIL_ENCRYPTION=null
     MAIL_FROM_ADDRESS="hello@example.com"
     MAIL_FROM_NAME="${APP_NAME}"
+    ```
+
+    ```plaintext
+    REVERB_APP_ID=
+    REVERB_APP_KEY=
+    REVERB_APP_SECRET=
+    REVERB_HOST="localhost"
+    REVERB_PORT=8080
+    REVERB_SCHEME=http
+    REVERB_SERVER_HOST=127.0.0.1
+    REVERB_SERVER_PORT=8080
+    
+    VITE_REVERB_APP_KEY="${REVERB_APP_KEY}"
+    VITE_REVERB_HOST="${REVERB_HOST}"
+    VITE_REVERB_PORT="${REVERB_PORT}"
+    VITE_REVERB_SCHEME="${REVERB_SCHEME}"
     ```
 
 7. Run migration database:
